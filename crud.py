@@ -53,3 +53,24 @@ def delete_task(db: Session, task_id: int):
     db.delete(db_task)
     db.commit()
     return db_task
+
+def update_user(db: Session, user_id: int, data: schemas.UserUpdate):
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not db_user:
+        return None
+    updates = data.model_dump(exclude_unset=True)
+    for field, value in updates.items():
+        setattr(db_user,field, value)
+
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+
+def delete_user(db: Session, user_id: int):
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not db_user:
+        return None
+    db.delete(db_user)
+    db.commit()
+    return db_user 
